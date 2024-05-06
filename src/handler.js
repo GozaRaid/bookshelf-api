@@ -12,10 +12,10 @@ const AddBook = (request, h) => {
     id, name, year, author, summary, publisher, pageCount, readPage, finished, reading, insertedAt, updatedAt
   };
 
-  books.push(newBook);
+  const isSuccess = !books.find((book) => book.id === id) &&  name && pageCount >= readPage;;
 
-  const isSuccess = books.filter((book) => book.id === id).length > 0 && name && pageCount >= readPage;
   if(isSuccess){
+    books.push(newBook);
     const response = h.response({
       status: "success",
       message: "Buku berhasil ditambahkan",
@@ -52,8 +52,12 @@ const AddBook = (request, h) => {
   
 };
 
-//blm selesai (menambahkan response cdoe 200 dan deklare name tidak adapat digunakan)
-const GetAllBooks = (_, h) => {
+const GetAllBooks = (request, h) => {
+  const queryParams = Object.keys(request.query);
+  const value = request.query[queryParams[0]];
+
+  const filter = books.filter((book)=> book[queryParams[0]] === value);
+
   const detailbook = books.map((book) => {
     return {
       id: book.id,
