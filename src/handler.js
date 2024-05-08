@@ -52,24 +52,92 @@ const AddBook = (request, h) => {
   
 };
 
+// const GetAllBooks = (request, h) => {
+//   const queryParams = Object.keys(request.query);
+//   const value = request.query[queryParams[0]];
+
+//   console.log(queryParams,value);
+
+//   console.log(request.query);
+
+//   const filter = books.filter((book)=> book.queryParams === value);
+
+//   console.log(filter);
+
+//   const detailbook = books.map((book) => {
+//     return {
+//       id: book.id,
+//       name: book.name,
+//       publisher: book.publisher
+//     };
+//   });
+
+//   const response = h.response({
+//     status: "success",
+//     data: {
+//       books: detailbook
+//     },
+//   });
+//   response.code(200);
+//   return response;
+// };
+
+
+
+
+// const GetAllBooks = (request, h) => {
+//   const b = books.filter((book) => {
+//       for (const key in request.queries) {
+//         if (book[key] != request.queries[key]) {
+//             return false;
+//         }
+//     }
+    
+//     return true;
+//   });
+  
+//   console.log("=======================================================")
+//   console.log(request.queries)
+//   console.log(b);
+
+//   const detailbook = books.map((book) => {
+//     return {
+//       id: book.id,
+//       name: book.name,
+//       publisher: book.publisher
+//     };
+//   });
+
+//   const response = h.response({
+//     status: "success",
+//     data: {
+//       books: detailbook
+//     },
+//   });
+//   response.code(200);
+//   return response;
+// };
+
 const GetAllBooks = (request, h) => {
-  const queryParams = Object.keys(request.query);
-  const value = request.query[queryParams[0]];
-
-  const filter = books.filter((book)=> book[queryParams[0]] === value);
-
-  const detailbook = books.map((book) => {
-    return {
-      id: book.id,
-      name: book.name,
-      publisher: book.publisher
-    };
+  const b = books.filter((book) => {
+    for (const key in request.query) {
+      let value = request.query[key];
+      if (value === '1') value = true;
+      if (value === '0') value = false;
+      if (key !== 'finished' && key != 'reading') {
+        if (book[key].toLowerCase().indexOf(value.toLowerCase()) !== -1) return true;
+      }
+      if (book[key] != value) {
+        return false;
+      }
+    }
+    return true;
   });
 
   const response = h.response({
     status: "success",
     data: {
-      books: detailbook
+      books: b.map((book) => ({ id: book.id, name: book.name, publisher: book.publisher }))
     },
   });
   response.code(200);
